@@ -5,7 +5,10 @@ import pygame
 from pygame.locals import (
     Color,
     Rect,
+    KEYDOWN,
+    K_ESCAPE,
 )
+from pygame import gfxdraw
 import json
 import threading
 import math
@@ -83,19 +86,19 @@ class JoyWidget:
         #                    math.radians(self.forward_angle_range[0]),
         #                    math.radians(self.forward_angle_range[1])
         # )
-        pygame.gfxdraw.pie(TB.background,
-                           self.pos[0],
-                           self.pos[1],
-                           self.radius, 360 - self.forward_angle_range[1],
-                           360 - self.forward_angle_range[0],
-                           Color("darkgreen"))
-        pygame.gfxdraw.pie(TB.background,
-                           self.pos[0],
-                           self.pos[1],
-                           self.radius,
-                           360 - self.backward_angle_range[1],
-                           360 - self.backward_angle_range[0],
-                           Color("purple"))
+        gfxdraw.pie(TB.background,
+                    self.pos[0],
+                    self.pos[1],
+                    self.radius, 360 - self.forward_angle_range[1],
+                    360 - self.forward_angle_range[0],
+                    Color("darkgreen"))
+        gfxdraw.pie(TB.background,
+                    self.pos[0],
+                    self.pos[1],
+                    self.radius,
+                    360 - self.backward_angle_range[1],
+                    360 - self.backward_angle_range[0],
+                    Color("purple"))
 
     def MouseInside(self, x, y):
         return self.In_Circle(self.pos[0], self.pos[1], self.radius, x, y)
@@ -507,13 +510,13 @@ class DroneSprite(pygame.sprite.Sprite):
         self.rect.center = pos
 
     def load_image(self, name, colorkey=None):
-
         try:
             image = pygame.image.load(name)
             image.convert_alpha()
         except pygame.error, message:
             print 'Cannot load image:', name
-            raise SystemExit, message
+            print message
+            sys.exit()
         return image, image.get_rect()
 
 
