@@ -1,29 +1,30 @@
-import time
 import thread
 from SimpleWebSocketServer import (
     SimpleWebSocketServer,
     WebSocket
 )
 import model
+from utils import date_message
 
 
 class WSockHandler(WebSocket):
+    def log_message(self):
+        return "[WEBSOCKET][%s:%d ".format(
+            self.address[0],
+            self.address[1]
+        )
+
     def handleMessage(self):
         try:
             model.MODEL.HandleData(self.data, self)
-        except Exception, e:
-            print "Exception: ", e
+        except Exception as e:
+            print "Exception: ", e.message
 
     def handleConnected(self):
-        s = time.strftime("%Y/%m/%d %H:%M:%S", time.localtime())
-        print "[WEBSOCKET][%s][%s:%d] Connected" % (
-            s, self.address[0], self.address[1]
-        )
+        date_message(self.log_message() + 'Connected')
 
     def handleClose(self):
-        s = time.strftime("%Y/%m/%d %H:%M:%S", time.localtime())
-        print "[WEBSOCKET][%s][%s:%d] Closed" % (
-            s, self.address[0], self.address[1])
+        date_message(self.log_message() + 'Closed')
 
 
 def websocketserver_thread(host='', port=8000):

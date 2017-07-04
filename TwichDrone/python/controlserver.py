@@ -6,35 +6,8 @@ import model
 import argparse
 import time
 from ardumotor import ArduMotor
-from goprohero import GoProHero
-import logging
-
-
-class GoProHelper:
-    def __init__(self, passwd):
-        self.camera = GoProHero(password=passwd,
-                                log_level=logging.CRITICAL)
-
-    def Status(self):
-        s = self.camera.status()
-        if s['raw'] == {}:
-            s = {
-                'power': 'off',
-                'batt1': 0
-            }
-        return s
-
-    def RecordStart(self):
-        self.camera.command('record', 'on')
-
-    def RecordStop(self):
-        self.camera.command('record', 'off')
-
-
-def LOG(msg):
-    s = time.strftime("%Y/%m/%d %H:%M:%S", time.localtime())
-    msg = "[%s]" + msg
-    return msg % s
+from go_pro_helper import GoProHelper
+from utils import date_message
 
 
 if __name__ == "__main__":
@@ -118,20 +91,20 @@ if __name__ == "__main__":
                 if rec_old:
                     if not rec_old and rec:
                         if args.verbose > 1:
-                            print LOG("START_RECORDING")
+                            date_message("START_RECORDING")
                         gopro.RecordStart()
                     if rec_old and not rec:
                         if args.verbose > 1:
-                            print LOG("STOP_RECORDING")
+                            date_message("STOP_RECORDING")
                         gopro.RecordStop()
                 else:
                     if rec:
                         if args.verbose > 1:
-                            print LOG("START_RECORDING")
+                            date_message("START_RECORDING")
                         gopro.RecordStart()
                     else:
                         if args.verbose > 1:
-                            print LOG("STOP_RECORDING")
+                            date_message("STOP_RECORDING")
                         gopro.RecordStop()
 
             # send data to arduino HERE
@@ -151,13 +124,13 @@ if __name__ == "__main__":
                 if data['ML'].direction == model.MotorModel.BACKWARD:
                     MLD = 'B'
 
-                print LOG("[CONTROL][OUT][MotorLEFT] [Power: %03d] " +
-                          "[Direction: %s[%s] | [MotorRIGHT] [Power: %03d] " +
-                          "[Direction: %s[%s]" %
-                          (data['MR'].power,
-                           data['MR'].direction,
-                           MRD, data['ML'].power,
-                           data['ML'].direction, MLD))
+                date_message("[CONTROL][OUT]" +
+                             "[MotorLEFT] [Power: %03d][Direction: %s[%s]|" +
+                             "[MotorRIGHT] [Power: %03d][Direction: %s[%s]" %
+                             (data['MR'].power,
+                              data['MR'].direction,
+                              MRD, data['ML'].power,
+                              data['ML'].direction, MLD))
 
         olddata = data
         driver.DriveMotor(ArduMotor.MOTOR_LEFT, brake=True)
