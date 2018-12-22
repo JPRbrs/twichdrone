@@ -37,6 +37,7 @@
   <script src="debug.js"></script>
   <script src="joystick_utils.js"></script>
   <script src="wsock.js"></script>
+  
 
 <script>
 
@@ -45,7 +46,7 @@ document.fullscreenEnabled = document.fullscreenEnabled || document.mozFullScree
 //var wsock = new WSock('ws://192.168.0.163:8000/');    // pi with VodafoneLAN 
 //var wsock = new WSock('ws://192.168.0.155:8000/');    // pi with control in mac
 //var wsock = new WSock('ws://localhost:8000/');          // mac
-var wsock = new WSock('ws://192.168.2.1:8000/');          // Pi production
+var wsock = new WSock('ws://127.0.0.1:8000/');          // Pi production
 
 
 function requestFullscreen(element) {
