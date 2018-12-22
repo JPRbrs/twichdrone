@@ -1,9 +1,9 @@
-import time
-import datetime
-
-import math
-import json
 import copy
+import datetime
+import json
+import math
+import time
+
 from nonlinearinterp import NonLinearInterpolator
 
 
@@ -132,20 +132,23 @@ class DroneModel:
             print("[MODEL][HandleData] Exception".format(e))
             return
 
-        if data.has_key("kind") \
+        if 'kind' in data \
            and data["kind"].lower() in self.allowed_messages:
 
             if data["kind"].lower() == "joystick" \
                and "distance" in data.keys() and "angle" in data.keys():
                 # joystick input
+                print("joystick: ", data)
                 self.UpdateJoyData(data)
 
             if data["kind"].lower() == "button" \
                and "id" in data.keys() and "pressed" in data.keys():
                 # button pressed (work as boolean switch)
+                print("button: ", data)
                 self.UpdateButtonData(data)
 
             if data["kind"] == "status":
+                print("status :", data)
                 self.HandleMessageStatus(data, wsock)
 
     def UpdateJoyData(self, data):

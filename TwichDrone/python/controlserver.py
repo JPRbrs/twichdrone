@@ -120,7 +120,7 @@ if __name__ == "__main__":
                 if data['ML'].direction == model.MotorModel.BACKWARD:
                     MLD = 'B'
 
-                print(log("[ctl][out][left] [Pwr: %03d] [Dir: %s[%s] | [right] [Pwr: %03d] [Dir: %s[%s]" % (data['MR'].power, data['MR'].direction, MRD, data['ML'].power, data['ML'].direction, MLD)))  # NOQA
+                # print(log("[ctl][out][left] [Pwr: %03d] [Dir: %s[%s] | [right] [Pwr: %03d] [Dir: %s[%s]" % (data['MR'].power, data['MR'].direction, MRD, data['ML'].power, data['ML'].direction, MLD)))  # NOQA
 
         olddata = data
         # driver.DriveMotor(
