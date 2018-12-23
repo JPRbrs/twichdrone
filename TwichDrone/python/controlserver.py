@@ -5,7 +5,7 @@ import wsock
 import model
 import argparse
 import time
-# from ardumotor import ArduMotor
+from ardumotor_chip import ArduMotor
 
 
 def log(msg):
@@ -51,7 +51,7 @@ if __name__ == "__main__":
     print("ControlServer started at {}:{} (verbose:{}) Refresh: {} Hz").format(
         args.address, args.port, args.verbose, args.frequency)
 
-    # driver = ArduMotor(port=args.serialport)
+    driver = ArduMotor(port='/dev/ttyACM0')
 
     olddata = None
     ml_amp = 0.0
@@ -99,18 +99,26 @@ if __name__ == "__main__":
                         if args.verbose > 1:
                             print(log("STOP_RECORDING"))
 
-        #     # send data to arduino HERE
+            # send data to arduino HERE
 
-        #     # driver.DriveMotor(
-        #     #     ArduMotor.MOTOR_LEFT,
-        #     #     data['ML'].direction,
-        #     #     data['ML'].power)
-        #     # driver.DriveMotor(
-        #     #     ArduMotor.MOTOR_RIGHT,
-        #     #     data['MR'].direction,
-        #     #     data['MR'].power)
+            print('[ML][dir]: {}, [ML][pow]: {}, [MR][dir]: {}, [MR][pow]: {}'.format(  # NOQA
+                data['ML'].direction,
+                data['ML'].power,
+                data['MR'].direction,
+                data['MR'].power))
 
-        #     # until here
+            driver.move_motor(data['ML'].direction, data['MR'].direction)
+            driver.move_motor(0, 0)
+            # driver.DriveMotor(
+            #     ArduMotor.MOTOR_LEFT,
+            #     data['ML'].direction,
+            #     data['ML'].power)
+            # driver.DriveMotor(
+            #     ArduMotor.MOTOR_RIGHT,
+            #     data['MR'].direction,
+            #     data['MR'].power)
+
+            # until here
 
             if args.verbose >= 1:
                 MRD = 'F'
