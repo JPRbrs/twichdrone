@@ -138,13 +138,13 @@ class DroneModel:
             if data["kind"].lower() == "joystick" \
                and "distance" in data.keys() and "angle" in data.keys():
                 # joystick input
-                print("joystick: ", data)
+                # print("joystick: ", data)
                 self.UpdateJoyData(data)
 
             if data["kind"].lower() == "button" \
                and "id" in data.keys() and "pressed" in data.keys():
                 # button pressed (work as boolean switch)
-                print("button: ", data)
+                # print("button: ", data)
                 self.UpdateButtonData(data)
 
             if data["kind"] == "status":
@@ -181,7 +181,7 @@ class DroneModel:
 
             if self.verbose > 1:
                 s = time.strftime("%Y/%m/%d %H:%M:%S", time.localtime())
-                print "[MODEL][%s][ IN][button] [Name: %s] [Pressed: %s]" % (s,data["id"],self.buttons[data["id"]])  # NOQA
+                # print "[MODEL][%s][ IN][button] [Name: %s] [Pressed: %s]" % (s,data["id"],self.buttons[data["id"]])  # NOQA
 
     def HandleMessageStatus(self, data, wsock):
         # print "sending message to client (dummy)"
