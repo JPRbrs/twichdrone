@@ -101,14 +101,14 @@ if __name__ == "__main__":
 
             # send data to arduino HERE
 
-            print('[ML][dir]: {}, [ML][pow]: {}, [MR][dir]: {}, [MR][pow]: {}'.format(  # NOQA
-                data['ML'].direction,
-                data['ML'].power,
-                data['MR'].direction,
-                data['MR'].power))
+            # print('[ML][dir]: {}, [ML][pow]: {}, [MR][dir]: {}, [MR][pow]: {}'.format(  # NOQA
+            #     data['ML'].direction,
+            #     data['ML'].power,
+            #     data['MR'].direction,
+            #     data['MR'].power))
 
-            driver.move_motor(data['ML'].direction, data['MR'].direction)
-            driver.move_motor(0, 0)
+            # print('ml: {}, mr: {}'.format(data['ML'].direction, data['MR'].direction))  # NOQA
+            driver.move_motor(data['ML'], data['MR'])
             # driver.DriveMotor(
             #     ArduMotor.MOTOR_LEFT,
             #     data['ML'].direction,
@@ -128,9 +128,11 @@ if __name__ == "__main__":
                 if data['ML'].direction == model.MotorModel.BACKWARD:
                     MLD = 'B'
 
-                # print(log("[ctl][out][left] [Pwr: %03d] [Dir: %s[%s] | [right] [Pwr: %03d] [Dir: %s[%s]" % (data['MR'].power, data['MR'].direction, MRD, data['ML'].power, data['ML'].direction, MLD)))  # NOQA
+            print(log("[ctl][out][left] [Pwr: %03d] [Dir: %s[%s] | [right] [Pwr: %03d] [Dir: %s[%s]" % (data['MR'].power, data['MR'].direction, MRD, data['ML'].power, data['ML'].direction, MLD)))  # NOQA
 
         olddata = data
+        # print('old ml: {}, mr: {}'.format(data['ML'].direction, data['MR'].direction))  # NOQA
+        driver.move_motor()
         # driver.DriveMotor(
         #     ArduMotor.MOTOR_LEFT,
         #     brake=True)
