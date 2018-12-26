@@ -51,7 +51,7 @@ if __name__ == "__main__":
     print("ControlServer started at {}:{} (verbose:{}) Refresh: {} Hz").format(
         args.address, args.port, args.verbose, args.frequency)
 
-    driver = ArduMotor(port='/dev/ttyACM0')
+    driver = ArduMotor(port=args.serialport)
 
     olddata = None
     ml_amp = 0.0

@@ -1,4 +1,4 @@
-# This is a test to check nanpy works on arduino
+import argparse
 
 from nanpy import ArduinoApi
 from nanpy import SerialManager
@@ -15,8 +15,8 @@ MOTOR_RIGHT_RV = 9
 
 class ArduMotor(object):
 
-    def __init__(self, port=None):
-        self.connection = SerialManager(device=port)
+    def __init__(self, device=None):
+        self.connection = SerialManager(device=device)
         self.arduino_api = ArduinoApi(connection=self.connection)
 
         self.arduino_api.pinMode(MOTOR_RIGHT_EN, self.arduino_api.OUTPUT)
@@ -100,36 +100,39 @@ class ArduMotor(object):
             self.arduino_api.digitalWrite(MOTOR_LEFT_EN, self.arduino_api.LOW)
             self.arduino_api.digitalWrite(MOTOR_RIGHT_EN, self.arduino_api.LOW)
 
-    def test_motor(self, ml=None, mr=None):
-        connection = SerialManager(device='/dev/ttyACM3')
+    def test_motor_with_arduino_api(self, ml=None, mr=None):
+        ''' Test the motors are able to move using ArduinoApi 
+        THIS IS NOT TESTING ArduMotor class
+        '''
 
-        arduino_api = ArduinoApi(connection=connection)
-        arduino_api.pinMode(MOTOR_LEFT_EN, arduino_api.OUTPUT)
-        arduino_api.pinMode(MOTOR_LEFT_FWD, arduino_api.OUTPUT)
-        arduino_api.pinMode(MOTOR_LEFT_RV, arduino_api.OUTPUT)
-        arduino_api.pinMode(MOTOR_RIGHT_EN, arduino_api.OUTPUT)
-        arduino_api.pinMode(MOTOR_RIGHT_FWD, arduino_api.OUTPUT)
-        arduino_api.pinMode(MOTOR_RIGHT_RV, arduino_api.OUTPUT)
+        print('Please note that this is not testing ArduMotor class')
 
         # ENABLE
-        arduino_api.analogWrite(MOTOR_LEFT_EN, 255)
-        arduino_api.analogWrite(MOTOR_RIGHT_EN, 255)
+        self.arduino_api.analogWrite(MOTOR_LEFT_EN, 255)
+        self.arduino_api.analogWrite(MOTOR_RIGHT_EN, 255)
 
         # MOVE FORWARD
-        arduino_api.digitalWrite(MOTOR_LEFT_FWD, arduino_api.HIGH)
-        arduino_api.digitalWrite(MOTOR_RIGHT_FWD, arduino_api.HIGH)
+        self.arduino_api.digitalWrite(MOTOR_LEFT_FWD, self.arduino_api.HIGH)
+        self.arduino_api.digitalWrite(MOTOR_RIGHT_FWD, self.arduino_api.HIGH)
 
         for x in range(250, 0, -50):
             print("Going: {}".format(x))
             sleep(1)
-            arduino_api.analogWrite(MOTOR_LEFT_EN, x)
-            arduino_api.analogWrite(MOTOR_RIGHT_EN, x)
+            self.arduino_api.analogWrite(MOTOR_LEFT_EN, x)
+            self.arduino_api.analogWrite(MOTOR_RIGHT_EN, x)
 
         # DISABLE
-        arduino_api.analogWrite(MOTOR_LEFT_EN, 0)
-        arduino_api.analogWrite(MOTOR_RIGHT_EN, 0)
+        self.arduino_api.analogWrite(MOTOR_LEFT_EN, 0)
+        self.arduino_api.analogWrite(MOTOR_RIGHT_EN, 0)
 
 
 if __name__ == '__main__':
-    driver = ArduMotor(port='/dev/ttyACM3')
-    driver.test_motor()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-s",
+                        "--serialport",
+                        help="arduino serial port",
+                        default='')
+    args = parser.parse_args()
+
+    driver = ArduMotor('/dev/' + args.serialport)
+    driver.test_motor_with_arduino_api()
