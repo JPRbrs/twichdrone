@@ -205,16 +205,14 @@ class DroneModel:
         wsock.sendMessage(unicode(msg, 'utf-8'))
 
     def in_forward_angle(self, angle):
-        # in radians
-        ang_d = math.degrees(angle)
+        ang_d = math.degrees(angle)  # radians
         if ang_d >= self.FORWARD_ANGLE_RANGE[0] and \
            ang_d <= self.FORWARD_ANGLE_RANGE[1]:
             return True
         return False
 
     def in_backward_angle(self, angle):
-        # in radians
-        ang_d = math.degrees(angle)
+        ang_d = math.degrees(angle)  # radians
         if ang_d >= self.BACKWARD_ANGLE_RANGE[0] and \
            ang_d <= self.BACKWARD_ANGLE_RANGE[1]:
             return True

@@ -1,17 +1,15 @@
-import time
-import thread
-from SimpleWebSocketServer import SimpleWebSocketServer, WebSocket
 import model
+import thread
+import time
+
+from SimpleWebSocketServer import SimpleWebSocketServer, WebSocket
 
 
 class WSockHandler(WebSocket):
 
     def handleMessage(self):
-        # can't send messages TO client. I don't know why. Try at home.
         try:
             model.MODEL.handle_data(self.data, self)
-            # print("wsock: model print_data")
-            # model.MODEL.print_data()
             self.sendMessage("TwichDrone ready to rock!")
 
         except Exception as e:
@@ -33,19 +31,13 @@ class WSockHandler(WebSocket):
             self.address[1]))
 
 
-def websocketserver_thread(
-        host='',
-        port=8000):
+def websocketserver_thread(host='', port=8000):
     server = SimpleWebSocketServer(host, port, WSockHandler)
     server.serveforever()
 
 
-def websocketserver_start(
-        host='',
-        port=8000):
-    thread.start_new_thread(
-        websocketserver_thread,
-        (host, port))
+def websocketserver_start(host='', port=8000):
+    thread.start_new_thread(websocketserver_thread, (host, port))
 
 
 if __name__ == "__main__":
