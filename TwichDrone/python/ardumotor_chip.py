@@ -16,7 +16,7 @@ MOTOR_RIGHT_RV = 9
 class ArduMotor(object):
 
     def __init__(self, port=None):
-        self.connection = SerialManager(device='/dev/ttyACM3')
+        self.connection = SerialManager(device=port)
         self.arduino_api = ArduinoApi(connection=self.connection)
 
         self.arduino_api.pinMode(MOTOR_RIGHT_EN, self.arduino_api.OUTPUT)
@@ -26,10 +26,36 @@ class ArduMotor(object):
         self.arduino_api.pinMode(MOTOR_LEFT_FWD, self.arduino_api.OUTPUT)
         self.arduino_api.pinMode(MOTOR_LEFT_RV, self.arduino_api.OUTPUT)
 
-    def move_motor(self, ml=None, mr=None):
+    def move_motor(self,
+                   right_power=None,
+                   right_dir=None,
+                   left_power=None,
+                   left_dir=None):
+        if not right_power and right_dir and left_power and left_dir:
+            self.arduino_api.analogWrite(MOTOR_LEFT_EN, 0)
+            self.arduino_api.analogWrite(MOTOR_RIGHT_EN, 0)
+            return
+
+        self.arduino_api.analogWrite(MOTOR_LEFT_EN, 250)
+        self.arduino_api.analogWrite(MOTOR_RIGHT_EN, 250)
+
+        if right_dir == 1:
+            print("right fw")
+            #self.arduino_api.digitalWrite(MOTOR_RIGHT_FWD, self.arduino_api.HIGH)
+        else:
+            print("rightback")
+            #self.arduino_api.digitalWrite(MOTOR_RIGHT_RV, self.arduino_api.LOW)
+
+        if left_dir == 1:
+            print("left fw")
+            #self.arduino_api.digitalWrite(MOTOR_LEFT_FWD, self.arduino_api.HIGH)
+        else:
+            print("left bw")
+            #self.arduino_api.digitalWrite(MOTOR_LEFT_RV, self.arduino_api.LOW)
+
+    def move_motor_old(self, ml=None, mr=None):
         if ml and mr:
             # Activate motors
-
             if ml.power > 0 and mr.power > 0:
                 if ml.direction == 1 and mr.direction == 1:
                     self.arduino_api.analogWrite(MOTOR_LEFT_EN, 255)

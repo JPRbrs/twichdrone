@@ -62,10 +62,6 @@ if __name__ == "__main__":
         sample_start_time = time.time()
 
         # begin block
-
-        # ml_amp = (ml_amp + driver.GetCurrent(ArduMotor.MOTOR_LEFT))/2.0
-        # mr_amp = (mr_amp + driver.GetCurrent(ArduMotor.MOTOR_RIGHT))/2.0
-
         stats = {'amp_l': ml_amp, 'amp_r': mr_amp}
 
         model.MODEL.set_stats(stats)
@@ -101,23 +97,19 @@ if __name__ == "__main__":
 
             # send data to arduino HERE
 
-            # print('[ML][dir]: {}, [ML][pow]: {}, [MR][dir]: {}, [MR][pow]: {}'.format(  # NOQA
-            #     data['ML'].direction,
-            #     data['ML'].power,
-            #     data['MR'].direction,
-            #     data['MR'].power))
+            print('[ML][dir]: {}, [ML][pow]: {}, [MR][dir]: {}, [MR][pow]: {}'.format(  # NOQA
+                data['ML'].direction,
+                data['ML'].power,
+                data['MR'].direction,
+                data['MR'].power))
 
             # print('ml: {}, mr: {}'.format(data['ML'].direction, data['MR'].direction))  # NOQA
-            driver.move_motor(data['ML'], data['MR'])
-            # driver.DriveMotor(
-            #     ArduMotor.MOTOR_LEFT,
-            #     data['ML'].direction,
-            #     data['ML'].power)
-            # driver.DriveMotor(
-            #     ArduMotor.MOTOR_RIGHT,
-            #     data['MR'].direction,
-            #     data['MR'].power)
-
+            driver.move_motor(
+                data['MR'].power,
+                data['MR'].direction,
+                data['ML'].power,
+                data['ML'].direction
+            )
             # until here
 
             if args.verbose >= 1:
@@ -128,17 +120,8 @@ if __name__ == "__main__":
                 if data['ML'].direction == model.MotorModel.BACKWARD:
                     MLD = 'B'
 
-            print(log("[ctl][out][left] [Pwr: %03d] [Dir: %s[%s] | [right] [Pwr: %03d] [Dir: %s[%s]" % (data['MR'].power, data['MR'].direction, MRD, data['ML'].power, data['ML'].direction, MLD)))  # NOQA
-
         olddata = data
-        # print('old ml: {}, mr: {}'.format(data['ML'].direction, data['MR'].direction))  # NOQA
         driver.move_motor()
-        # driver.DriveMotor(
-        #     ArduMotor.MOTOR_LEFT,
-        #     brake=True)
-        # driver.DriveMotor(
-        #     ArduMotor.MOTOR_RIGHT,
-        #     brake=True)
 
         # time control
         sample_end_time = time.time()

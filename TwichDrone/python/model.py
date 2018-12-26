@@ -20,10 +20,6 @@ class MotorModel:
             self.direction = MotorModel.FORWARD
             self.power = 0.0
 
-        def update(self, power, direction):
-            self.power = power
-            self.direction = direction
-
         def __eq__(self, other):
 
             if self.mlabel == other.mlabel and \
@@ -39,20 +35,23 @@ class MotorModel:
             s = "[ %s, %d, %d]" % (self.label, self.power, self.direction)
             return s
 
+        def update(self, power, direction):
+                self.power = power
+                self.direction = direction
+
 
 class InputData:
 
     def __init__(self,
                  distance=0.0,
-                 angle=0.0,
+                 angle=0.0,  # radians
                  maxdistance=75,
                  x=None,
                  y=None):
-        "maxdistance is set in the CLIENT (nipplejs)"
 
         self.distance_linear = distance
         self.distance = distance
-        self.angle = angle                  # in radians
+        self.angle = angle
         self.maxdistance = maxdistance
         self.x = x
         self.y = y
@@ -82,23 +81,18 @@ class DroneModel:
     MAX_DISTANCE = 75
     # if you set the same than 90-40 ... there is no gap
     MAX_STEERINGANGLE = math.radians(45)
-
-    # non linear interpolator "curve" for joystick input"
-
-    # 20%, 30%, 30%, 20% -> 10%, 40%, 40%, 10%
-
-    #DISTANCECURVE = [ [(0,23),(0,7)], [(23,37),(7,37)], [(37,55),(37,55)], [(55,75),(55,75)] ]
-    # map the distance with the distance (joystick dead end)
-    #DISTANCECURVE = [ [(0,20),(0,10)], [(20,60),(10,50)], [(60,70),(50,60)], [(70,76),(60,75)] ]
-    DISTANCECURVE = [ [(0,15),(0,7)], [(15,30),(7,18)], [(30,45),(18,31)], [(45,65),(31,49)], [(65,76),(49,76)] ]
-
-
-    # 20%, 30%, 30%, 20% -> 10%, 40%, 40%, 10%
-    # 27/03/2017: this curve is TOO fast. Change it to something more smooth
-    #JOYCURVE = [ [(0,55),(0,25)], [(55,128),(25,127)], [(128,200),(127,229)], [(200,255),(229,255)] ]
-    # maps the output curve to this curve
-    #POWERCURVE = [ [(0,80),(0,40)], [(80,210),(40,180)], [(210,240),(180,190)], [(240,256),(190,200)] ]
-    POWERCURVE = [ [(0,40),(0,15)], [(40,80),(15,40)], [(80,120),(40,70)], [(120,200),(70,140)], [(200,240),(140,190)], [(240,256),(190,210)] ]
+    DISTANCECURVE = [
+            [(0, 15), (0, 7)],
+            [(15, 30), (7, 18)],
+            [(30, 45), (18, 31)],
+            [(45, 65), (31, 49)],
+            [(65, 76), (49, 76)]]
+    POWERCURVE = [[(0, 40), (0, 15)],
+                  [(40, 80), (15, 40)],
+                  [(80, 120), (40, 70)],
+                  [(120, 200), (70, 140)],
+                  [(200, 240), (140, 190)],
+                  [(240, 256), (190, 210)]]
 
     def __init__(self, verbose=0):
 
@@ -116,8 +110,7 @@ class DroneModel:
 
     def HandleData(self, data, wsock=None):
         "receive a JSON string, and process it. Do some sanity checks."
-
-        # {u'y': u'up', u'distance': 30.675723300355934, u'kind': u'joystick', u'angle': 1.902855794337782, u'x': u'left'}
+        # {u'y': u'up', u'distance': 30.675723300355934, u'kind': u'joystick', u'angle': 1.902855794337782, u'x': u'left'}  # NOQA
         # {u'y': 0, u'distance': 0, u'kind': u'joystick', u'angle': 0, u'x': 0}
         # {u'kind': u'button', u'id': u'rec', u'pressed': u'true'}
         # {u'kind': u'status' }
@@ -184,8 +177,6 @@ class DroneModel:
                 # print "[MODEL][%s][ IN][button] [Name: %s] [Pressed: %s]" % (s,data["id"],self.buttons[data["id"]])  # NOQA
 
     def HandleMessageStatus(self, data, wsock):
-        # print "sending message to client (dummy)"
-
         time_delta = time.time() - self.start_time
         m, s = divmod(time_delta, 60)
         h, m = divmod(m, 60)
@@ -212,8 +203,6 @@ class DroneModel:
         msg = "%s</br>%s</br>%s</br>" % (time_delta_s, gopro, motor_a)
 
         wsock.sendMessage(unicode(msg, 'utf-8'))
-        # tornado
-        # wsock.write_message(unicode("hola","utf-8"))
 
     def InForwardAngle(self, angle):
         # in radians
@@ -251,12 +240,8 @@ class DroneModel:
         cx = 0.0
         if data.distance != 0.0:
             cx = math.fabs(Fx)*100.0/data.distance
-            # cx = (data.distance*percent_x)/100.0
-            # print "Dist: %3.2f, Fx: %3.2f, perc: %3.2f %%, Cx: %3.2f" % (
-            #         data.distance, math.fabs(Fx), percent_x, cx)
 
         # generic power (non balanced)
-
         MPower = self.interpolator.interpolate(
                 data.distance,
                 0,
