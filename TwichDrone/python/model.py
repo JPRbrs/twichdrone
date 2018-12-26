@@ -108,7 +108,7 @@ class DroneModel:
         self.start_time = time.time()
         self.stats = None
 
-    def HandleData(self, data, wsock=None):
+    def handle_data(self, data, wsock=None):
         "receive a JSON string, and process it. Do some sanity checks."
         # {u'y': u'up', u'distance': 30.675723300355934, u'kind': u'joystick', u'angle': 1.902855794337782, u'x': u'left'}  # NOQA
         # {u'y': 0, u'distance': 0, u'kind': u'joystick', u'angle': 0, u'x': 0}
@@ -122,7 +122,7 @@ class DroneModel:
             data = json.loads(data)
         except Exception as e:
             s = time.strftime("%Y/%m/%d %H:%M:%S", time.localtime())
-            print("[MODEL][HandleData] Exception".format(e))
+            print("[MODEL][handle_data] Exception".format(e))
             return
 
         if 'kind' in data \
@@ -132,19 +132,19 @@ class DroneModel:
                and "distance" in data.keys() and "angle" in data.keys():
                 # joystick input
                 # print("joystick: ", data)
-                self.UpdateJoyData(data)
+                self.update_joystick_data(data)
 
             if data["kind"].lower() == "button" \
                and "id" in data.keys() and "pressed" in data.keys():
                 # button pressed (work as boolean switch)
                 # print("button: ", data)
-                self.UpdateButtonData(data)
+                self.update_button_data(data)
 
             if data["kind"] == "status":
                 print("status :", data)
-                self.HandleMessageStatus(data, wsock)
+                self.handle_message_status(data, wsock)
 
-    def UpdateJoyData(self, data):
+    def update_joystick_data(self, data):
         dint = self.interpolator.NLinterp(
                 data["distance"],
                 DroneModel.DISTANCECURVE)
@@ -163,7 +163,7 @@ class DroneModel:
                 self.data.x = data["x"]
                 self.data.y = data["y"]
 
-    def UpdateButtonData(self, data):
+    def update_button_data(self, data):
         with MODEL_LOCK:
             if data["id"] not in self.buttons.keys():
                 self.buttons[data["id"]] = False
@@ -176,7 +176,7 @@ class DroneModel:
                 s = time.strftime("%Y/%m/%d %H:%M:%S", time.localtime())
                 # print "[MODEL][%s][ IN][button] [Name: %s] [Pressed: %s]" % (s,data["id"],self.buttons[data["id"]])  # NOQA
 
-    def HandleMessageStatus(self, data, wsock):
+    def handle_message_status(self, data, wsock):
         time_delta = time.time() - self.start_time
         m, s = divmod(time_delta, 60)
         h, m = divmod(m, 60)
@@ -204,7 +204,7 @@ class DroneModel:
 
         wsock.sendMessage(unicode(msg, 'utf-8'))
 
-    def InForwardAngle(self, angle):
+    def in_forward_angle(self, angle):
         # in radians
         ang_d = math.degrees(angle)
         if ang_d >= self.FORWARD_ANGLE_RANGE[0] and \
@@ -212,7 +212,7 @@ class DroneModel:
             return True
         return False
 
-    def InBackwardAngle(self, angle):
+    def in_backward_angle(self, angle):
         # in radians
         ang_d = math.degrees(angle)
         if ang_d >= self.BACKWARD_ANGLE_RANGE[0] and \
@@ -225,7 +225,7 @@ class DroneModel:
 
     def update(self):
         "calculate everything needed to work propertly"
-        data = self.getdata()['data']
+        data = self.get_data()['data']
         Fx = data.distance * math.cos(data.angle)
         Fy = data.distance * math.sin(data.angle)
 
@@ -260,7 +260,7 @@ class DroneModel:
         if Fx < 0:
                 right = False
 
-        if self.InForwardAngle(data.angle):
+        if self.in_forward_angle(data.angle):
             FullForward = True
             cr = cx
             cl = -cx
@@ -271,7 +271,7 @@ class DroneModel:
             MRPower = MPower + (MPower * cr / 100.0)
             MLPower = MPower + (MPower * cl / 100.0)
 
-        elif self.InBackwardAngle(data.angle):
+        elif self.in_backward_angle(data.angle):
             FullBackward = True
             cr = cx
             cl = -cx
@@ -324,17 +324,17 @@ class DroneModel:
                     self.ML.update(MLPower,
                                    MotorModel.FORWARD)
 
-    def getdata(self):
+    def get_data(self):
         with MODEL_LOCK:
             return {'data': copy.copy(self.data),
                     'MR': copy.copy(self.MR),
                     'ML': copy.copy(self.ML),
                     'buttons': copy.copy(self.buttons)}
 
-    def printdata(self):
+    def print_data(self):
         print self.data
 
-    def getbuttons_str(self):
+    def get_buttons_str(self):
         s = ''
         with MODEL_LOCK:
             for i in self.buttons.keys():

@@ -57,16 +57,15 @@ if __name__ == "__main__":
     ml_amp = 0.0
     mr_amp = 0.0
 
+    target_freq = 1/float(args.frequency)
+
     while True:
-        target_freq = 1/float(args.frequency)
         sample_start_time = time.time()
 
-        # begin block
         stats = {'amp_l': ml_amp, 'amp_r': mr_amp}
-
         model.MODEL.set_stats(stats)
         model.MODEL.update()
-        data = model.MODEL.getdata()
+        data = model.MODEL.get_data()
 
         if olddata and (olddata['data'] != data['data']
                         or olddata['MR'] != data['MR']
@@ -103,7 +102,6 @@ if __name__ == "__main__":
                 data['MR'].direction,
                 data['MR'].power))
 
-            # print('ml: {}, mr: {}'.format(data['ML'].direction, data['MR'].direction))  # NOQA
             driver.move_motor(
                 data['MR'].power,
                 data['MR'].direction,
@@ -111,14 +109,6 @@ if __name__ == "__main__":
                 data['ML'].direction
             )
             # until here
-
-            if args.verbose >= 1:
-                MRD = 'F'
-                MLD = 'F'
-                if data['MR'].direction == model.MotorModel.BACKWARD:
-                    MRD = 'B'
-                if data['ML'].direction == model.MotorModel.BACKWARD:
-                    MLD = 'B'
 
         olddata = data
         driver.move_motor()

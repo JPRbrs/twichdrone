@@ -9,9 +9,9 @@ class WSockHandler(WebSocket):
     def handleMessage(self):
         # can't send messages TO client. I don't know why. Try at home.
         try:
-            model.MODEL.HandleData(self.data, self)
-            # print("wsock: model printdata")
-            # model.MODEL.printdata()
+            model.MODEL.handle_data(self.data, self)
+            # print("wsock: model print_data")
+            # model.MODEL.print_data()
             self.sendMessage("TwichDrone ready to rock!")
 
         except Exception as e:

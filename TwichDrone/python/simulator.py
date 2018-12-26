@@ -441,33 +441,33 @@ if __name__ == "__main__":
 
             data_model = emujoy.UpdateFromInput(TB, mouse_x, mouse_y)
             if pygame.mouse.get_pressed()[0]:
-                model.MODEL.HandleData(json.dumps(data_model))
+                model.MODEL.handle_data(json.dumps(data_model))
 
         #
         # get data from model
         #
 
         model.MODEL.update()
-        data = model.MODEL.getdata()
+        data = model.MODEL.get_data()
 
         modeljoy.UpdateFromData(TB, data['data'])
         motors.Update(data['MR'], data['ML'])
 
 
         modeljoy.Draw(TB)
-        TB.RenderText(18,"[MODEL] Buttons: %s" % (model.MODEL.getbuttons_str()), (TB.Width()/2,30), Color("black"))
+        TB.RenderText(18,"[MODEL] Buttons: %s" % (model.MODEL.get_buttons_str()), (TB.Width()/2,30), Color("black"))
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT or event.type == KEYDOWN and event.key == K_ESCAPE:
                     sys.exit(0)
             if event.type == pygame.MOUSEBUTTONUP:
                     data_model = { 'kind': 'joystick', 'distance': 0.0, 'angle': 0.0 }
-                    model.MODEL.HandleData(json.dumps(data_model))
+                    model.MODEL.handle_data(json.dumps(data_model))
 
             # click on REC button
             if event.type == pygame.MOUSEBUTTONUP and recbutton.MouseInside(mouse_x, mouse_y):
                     data_model = { 'kind': 'button', 'id': 'rec', 'pressed': 'true'}
-                    model.MODEL.HandleData(json.dumps(data_model))
+                    model.MODEL.handle_data(json.dumps(data_model))
 
             # click on Drone (reset)
             if event.type == pygame.MOUSEBUTTONUP and arena.drone.rect.collidepoint(mouse_x, mouse_y):
