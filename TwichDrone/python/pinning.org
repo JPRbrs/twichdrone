@@ -1,0 +1,19 @@
+* L238D pinning
+
+| chip pin | name             | Arduino pin              | comments                             |
+|----------+------------------+--------------------------+--------------------------------------|
+|        1 | Enable 1         | arduino D5               | Feed with PWM signal                 |
+|        2 | In 1             | arduino D4               | w/7 - 1 high other low for direction |
+|        3 | out 1            | motor right motor active |                                      |
+|    4 & 5 | GND battery pack | GND                      |                                      |
+|        6 | out 2            | right motor GND          |                                      |
+|        7 | in 2             | arduino D3               | w/2 - 1 high other low for direction |
+|        8 | V+ motor         | battery pack 6V          |                                      |
+|        9 | Enable 2         | arduino D10              | Feed with PWM signal                 |
+|       10 | In 3             | arduino D9               |                                      |
+|       11 | Out 3            | left motor GND           |                                      |
+|  12 & 13 | GND              | battery pack GND         |                                      |
+|       14 | out 4            | left motor active        |                                      |
+|       15 | in               | arduino D8               |                                      |
+|       16 | V+               | battery pack 6V          |                                      |
+|          |                  |                          |                                      |
