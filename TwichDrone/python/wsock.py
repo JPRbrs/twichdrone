@@ -5,7 +5,7 @@ import time
 from SimpleWebSocketServer import SimpleWebSocketServer, WebSocket
 
 
-class WSockHandler(WebSocket):
+class WebSocketHandler(WebSocket):
 
     def handleMessage(self):
         try:
@@ -31,14 +31,14 @@ class WSockHandler(WebSocket):
             self.address[1]))
 
 
-def websocketserver_thread(host='', port=8000):
-    server = SimpleWebSocketServer(host, port, WSockHandler)
+def websocket_server_thread(host='', port=8000):
+    server = SimpleWebSocketServer(host, port, WebSocketHandler)
     server.serveforever()
 
 
-def websocketserver_start(host='', port=8000):
-    thread.start_new_thread(websocketserver_thread, (host, port))
+def websocket_server_start(host='', port=8000):
+    thread.start_new_thread(websocket_server_thread, (host, port))
 
 
 if __name__ == "__main__":
-    websocketserver_thread()
+    websocket_server_thread()

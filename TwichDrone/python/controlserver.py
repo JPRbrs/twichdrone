@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!venv/bin/python
 
 import threading
 import wsock
@@ -46,7 +46,7 @@ if __name__ == "__main__":
     model.MODEL = model.DroneModel(verbose=args.verbose)
     model.MODEL_LOCK = threading.Lock()
 
-    wsock.websocketserver_start(args.address, int(args.port))
+    wsock.websocket_server_start(args.address, int(args.port))
 
     print("ControlServer started at {}:{} (verbose:{}) Refresh: {} Hz").format(
         args.address, args.port, args.verbose, args.frequency)
@@ -60,6 +60,7 @@ if __name__ == "__main__":
     target_freq = 1/float(args.frequency)
 
     while True:
+
         sample_start_time = time.time()
 
         stats = {'amp_l': ml_amp, 'amp_r': mr_amp}
@@ -94,27 +95,15 @@ if __name__ == "__main__":
                         if args.verbose > 1:
                             print(log("STOP_RECORDING"))
 
-            # send data to arduino HERE
-
-            print('[ML][dir]: {}, [ML][pow]: {}, [MR][dir]: {}, [MR][pow]: {}'.format(  # NOQA
-                data['ML'].direction,
-                data['ML'].power,
-                data['MR'].direction,
-                data['MR'].power))
-
-            driver.move_motor(
-                data['MR'].power,
-                data['MR'].direction,
-                data['ML'].power,
-                data['ML'].direction
-            )
-            # until here
+            # send data to arduino here
 
         olddata = data
-        driver.move_motor()
+        driver.move_motor(0, 0, 0, 0)
 
         # time control
         sample_end_time = time.time()
+        # Time diff using an Arduino Uno and a raspberry pi 1 model B is on
+        # average 18us
         time_diff = sample_end_time - sample_start_time
         if time_diff < target_freq:
             time.sleep(target_freq - time_diff)

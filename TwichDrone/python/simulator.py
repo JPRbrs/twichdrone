@@ -401,7 +401,7 @@ class DroneSprite(pygame.sprite.Sprite):
 
 if __name__ == "__main__":
 
-    wsock.websocketserver_start('',8000)
+    wsock.websocket_server_start('',8000)
 
     ltime = 0
     pygame.init()
