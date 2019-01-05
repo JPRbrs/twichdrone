@@ -26,113 +26,103 @@ class ArduMotor(object):
         self.arduino_api.pinMode(MOTOR_LEFT_FWD, self.arduino_api.OUTPUT)
         self.arduino_api.pinMode(MOTOR_LEFT_RV, self.arduino_api.OUTPUT)
 
-    def move_motor(self,
-                   right_power=None,
-                   right_dir=None,
-                   left_power=None,
-                   left_dir=None):
-        if not right_power and right_dir and left_power and left_dir:
+    def move_motor(self, right_power, right_dir,
+                   left_power, left_dir):
+
+        if right_power == 0 and left_power == 0:
             self.arduino_api.analogWrite(MOTOR_LEFT_EN, 0)
             self.arduino_api.analogWrite(MOTOR_RIGHT_EN, 0)
             return
 
-        self.arduino_api.analogWrite(MOTOR_LEFT_EN, 250)
-        self.arduino_api.analogWrite(MOTOR_RIGHT_EN, 250)
+        self.arduino_api.analogWrite(MOTOR_LEFT_EN, right_power)
+        self.arduino_api.analogWrite(MOTOR_RIGHT_EN, left_power)
 
-        if right_dir == 1:
-            print("right fw")
-            #self.arduino_api.digitalWrite(MOTOR_RIGHT_FWD, self.arduino_api.HIGH)
-        else:
-            print("rightback")
-            #self.arduino_api.digitalWrite(MOTOR_RIGHT_RV, self.arduino_api.LOW)
-
-        if left_dir == 1:
-            print("left fw")
-            #self.arduino_api.digitalWrite(MOTOR_LEFT_FWD, self.arduino_api.HIGH)
-        else:
-            print("left bw")
-            #self.arduino_api.digitalWrite(MOTOR_LEFT_RV, self.arduino_api.LOW)
-
-    def move_motor_old(self, ml=None, mr=None):
-        if ml and mr:
-            # Activate motors
-            if ml.power > 0 and mr.power > 0:
-                if ml.direction == 1 and mr.direction == 1:
-                    self.arduino_api.analogWrite(MOTOR_LEFT_EN, 255)
-                    self.arduino_api.analogWrite(MOTOR_RIGHT_EN, 255)
-
-                    self.arduino_api.digitalWrite(MOTOR_LEFT_FWD,
-                                                  self.arduino_api.HIGH)
-                    self.arduino_api.digitalWrite(MOTOR_RIGHT_FWD,
-                                                  self.arduino_api.HIGH)
-                    self.arduino_api.digitalWrite(MOTOR_LEFT_RV,
-                                                  self.arduino_api.LOW)
-                    self.arduino_api.digitalWrite(MOTOR_RIGHT_RV,
-                                                  self.arduino_api.LOW)
-
-                if ml.direction == 0 and mr.direction == 0:
-                    self.arduino_api.analogWrite(MOTOR_LEFT_EN, 200)
-                    self.arduino_api.analogWrite(MOTOR_RIGHT_EN, 200)
-
-                    self.arduino_api.digitalWrite(MOTOR_LEFT_FWD,
-                                                  self.arduino_api.LOW)
-                    self.arduino_api.digitalWrite(MOTOR_RIGHT_FWD,
-                                                  self.arduino_api.LOW)
-                    self.arduino_api.digitalWrite(MOTOR_LEFT_RV,
-                                                  self.arduino_api.HIGH)
-                    self.arduino_api.digitalWrite(MOTOR_RIGHT_RV,
-                                                  self.arduino_api.HIGH)
-
-                if ml.direction == 0 and mr.direction == 1:
-                    self.arduino_api.digitalWrite(MOTOR_RIGHT_FWD,
-                                                  self.arduino_api.HIGH)
-                    self.arduino_api.digitalWrite(MOTOR_RIGHT_RV,
-                                                  self.arduino_api.LOW)
-
-                if ml.direction == 1 and mr.direction == 0:
-                    self.arduino_api.digitalWrite(MOTOR_LEFT_FWD,
-                                                  self.arduino_api.HIGH)
-                    self.arduino_api.digitalWrite(MOTOR_LEFT_RV,
-                                                  self.arduino_api.LOW)
-
-        else:
-            # Deactivate
-            self.arduino_api.digitalWrite(MOTOR_LEFT_EN, self.arduino_api.LOW)
-            self.arduino_api.digitalWrite(MOTOR_RIGHT_EN, self.arduino_api.LOW)
+        # Move motors here
 
     def test_motor_with_arduino_api(self, ml=None, mr=None):
-        ''' Test the motors are able to move using ArduinoApi 
-        THIS IS NOT TESTING ArduMotor class
+        ''' Test motors speed using ArduinoApi
+        THIS IS NOT USING ArduMotor class
         '''
 
-        print('Please note that this is not testing ArduMotor class')
-
-        # ENABLE
+        # Enable
         self.arduino_api.analogWrite(MOTOR_LEFT_EN, 255)
         self.arduino_api.analogWrite(MOTOR_RIGHT_EN, 255)
 
-        # MOVE FORWARD
+        # Move forward
         self.arduino_api.digitalWrite(MOTOR_LEFT_FWD, self.arduino_api.HIGH)
         self.arduino_api.digitalWrite(MOTOR_RIGHT_FWD, self.arduino_api.HIGH)
 
+        # Change speed
         for x in range(250, 0, -50):
             print("Going: {}".format(x))
             sleep(1)
             self.arduino_api.analogWrite(MOTOR_LEFT_EN, x)
             self.arduino_api.analogWrite(MOTOR_RIGHT_EN, x)
 
-        # DISABLE
+        # Disable
+        self.arduino_api.analogWrite(MOTOR_LEFT_EN, 0)
+        self.arduino_api.analogWrite(MOTOR_RIGHT_EN, 0)
+
+    def test_motor_direction(self, ml=None, mr=None):
+        '''Test motors direction using ArduinoApi
+        THIS IS NOT USING ArduMotor class
+        '''
+        
+        # Enable
+        self.arduino_api.analogWrite(MOTOR_LEFT_EN, 255)
+        self.arduino_api.analogWrite(MOTOR_RIGHT_EN, 255)
+
+        # Move fw
+        self.arduino_api.digitalWrite(MOTOR_RIGHT_FWD, 1)
+        self.arduino_api.digitalWrite(MOTOR_RIGHT_RV, 0)
+
+        self.arduino_api.digitalWrite(MOTOR_LEFT_FWD, 1)
+        self.arduino_api.digitalWrite(MOTOR_LEFT_RV, 0)
+
+        sleep(0.5)
+
+        # Move bw
+        self.arduino_api.digitalWrite(MOTOR_RIGHT_FWD, 0)
+        self.arduino_api.digitalWrite(MOTOR_RIGHT_RV, 1)
+
+        self.arduino_api.digitalWrite(MOTOR_LEFT_FWD, 0)
+        self.arduino_api.digitalWrite(MOTOR_LEFT_RV, 1)
+
+        sleep(0.5)
+
+        # Move right
+        self.arduino_api.digitalWrite(MOTOR_RIGHT_FWD, 1)
+        self.arduino_api.digitalWrite(MOTOR_RIGHT_RV, 0)
+
+        self.arduino_api.digitalWrite(MOTOR_LEFT_FWD, 0)
+        self.arduino_api.digitalWrite(MOTOR_LEFT_RV, 1)
+
+        sleep(0.5)
+
+        # Move left
+        self.arduino_api.digitalWrite(MOTOR_RIGHT_FWD, 0)
+        self.arduino_api.digitalWrite(MOTOR_RIGHT_RV, 1)
+
+        self.arduino_api.digitalWrite(MOTOR_LEFT_FWD, 1)
+        self.arduino_api.digitalWrite(MOTOR_LEFT_RV, 0)
+
+        sleep(0.5)
+
+        # Disable
         self.arduino_api.analogWrite(MOTOR_LEFT_EN, 0)
         self.arduino_api.analogWrite(MOTOR_RIGHT_EN, 0)
 
 
 if __name__ == '__main__':
+    # TODO: Add parameters to run different tests
     parser = argparse.ArgumentParser()
     parser.add_argument("-s",
                         "--serialport",
                         help="arduino serial port",
                         default='')
+
     args = parser.parse_args()
 
     driver = ArduMotor('/dev/' + args.serialport)
-    driver.test_motor_with_arduino_api()
+
+    driver.test_motor_direction()
