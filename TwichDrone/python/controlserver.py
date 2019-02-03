@@ -14,8 +14,7 @@ def log(msg):
     return msg % s
 
 
-if __name__ == "__main__":
-
+def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("-v", "--verbose",
                         help="Show detailed model info",
@@ -24,7 +23,7 @@ if __name__ == "__main__":
     parser.add_argument("-a",
                         "--address",
                         help="Host Address",
-                        default='')
+                        default='127.0.0.1')
     parser.add_argument("-p",
                         "--port",
                         help="Listen Port",
@@ -96,6 +95,13 @@ if __name__ == "__main__":
                             print(log("STOP_RECORDING"))
 
             # send data to arduino here
+            driver.move_motor(data['MR'].power, data['MR'].direction, data['ML'].power, data['ML'].direction)
+            print(
+                'Right power: ' + str(data['MR'].power),
+                'Right direction: ' + str(data['MR'].direction),
+                'Left power: ' + str(data['ML'].power),
+                'Left direction: ' + str(data['ML'].direction),
+            )
 
         olddata = data
         driver.move_motor(0, 0, 0, 0)
@@ -107,3 +113,7 @@ if __name__ == "__main__":
         time_diff = sample_end_time - sample_start_time
         if time_diff < target_freq:
             time.sleep(target_freq - time_diff)
+
+
+if __name__ == "__main__":
+    main()
